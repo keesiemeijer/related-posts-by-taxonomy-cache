@@ -8,8 +8,8 @@ Tested up to:      4.3
 
 ### Settings Page
 
-![Settings Page](/../develop/screenshots/screenshot-1.png?raw=true)
+![Settings Page](/../screenshots/screenshots/screenshot-1.png?raw=true)
 
 ### Progress Bar
 
-![progress bar](/../develop/screenshots/screenshot-2.png?raw=true)
+![progress bar](/../screenshots/screenshots/screenshot-2.png?raw=true)
