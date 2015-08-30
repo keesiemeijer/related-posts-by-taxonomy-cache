@@ -51,16 +51,21 @@ function km_rpbt_cache_admin_scripts() {
 	wp_register_script( 'rpbt_cache', plugins_url( '/cache.js', __FILE__ ), array( 'jquery', 'wp-util' ), false, true );
 	wp_enqueue_script( 'rpbt_cache' );
 
-	// Defaults for reset by Javascript.
-	$defaults = km_rpbt_get_default_args();
+	$defaults = '';
 
-	// Normalise values for use in form fields.
-	unset( $defaults['post_id'] );
-	$defaults['total'] = -1;
-	$defaults['batch'] = 10;
-	foreach ( array( 'related', 'post_thumbnail' ) as $field ) {
-		$defaults[ $field ] = $defaults[ $field ] ? 1 : 0;
+	// Defaults for reset by Javascript.
+	if ( function_exists( 'km_rpbt_plugin' ) ) {
+		$defaults = km_rpbt_get_default_args();
+		// Normalise values for use in form fields.
+		unset( $defaults['post_id'] );
+		$defaults['total'] = -1;
+		$defaults['batch'] = 10;
+		foreach ( array( 'related', 'post_thumbnail' ) as $field ) {
+			$defaults[ $field ] = $defaults[ $field ] ? 1 : 0;
+		}
 	}
+
+
 
 	$translation_array = array(
 		'settings_page' => plugins_url ( __FILE__ ),
@@ -232,24 +237,32 @@ function km_rpbt_cache_template() {
  */
 function km_rpbt_cache_admin() {
 
-	// Check if Related Posts by Taxonomy plugin is activated.
-	if ( !class_exists( 'Related_Posts_By_Taxonomy_Defaults' ) ) {
-		_e( 'Related Posts by Taxonomy plugin is not activated', 'rpbt-cache' );
+	echo '<div class="wrap rpbt_cache">';
+	echo '<h1>' . __( 'Related Posts by Taxonomy Cache', 'rpbt-cache' ) . '</h1>';
+
+	$plugin = false;
+	if ( function_exists( 'km_rpbt_plugin' ) ) {
+		$plugin = km_rpbt_plugin();
+	}
+
+	if ( !( $plugin instanceof Related_Posts_By_Taxonomy_Defaults ) ) {
+		$error = __( 'Related Posts by Taxonomy plugin is not installed or activated!', 'rpbt-cache' );
+		echo '<div class="error"><p>' . $error . '</p></div></div>';
 		return;
 	}
 
-	$defaults     = Related_Posts_By_Taxonomy_Defaults::get_instance();
-	$cache_exists = $defaults->cache instanceof Related_Posts_By_Taxonomy_Cache;
+	$cache_exists = $plugin->cache instanceof Related_Posts_By_Taxonomy_Cache;
 
 	// Check if cache is enabled.
 	if ( !$cache_exists || !class_exists( 'Related_Posts_By_Taxonomy_Cache' ) ) {
-		_e( 'Related Posts by Taxonomy cache is not activated', 'rpbt-cache' );
+		$error = __( 'The cache for the Related Posts by Taxonomy plugin is not enabled!', 'rpbt-cache' );
+		echo '<div class="error"><p>' . $error . '</p></div></div>';
 		return;
 	}
 
-	$cache      = $defaults->cache;
-	$taxonomies = implode( ', ', array_keys( $defaults->taxonomies ) );
-	$post_types = implode( ', ', array_keys( $defaults->post_types ) );
+	$cache      = $plugin->cache;
+	$taxonomies = implode( ', ', array_keys( $plugin->taxonomies ) );
+	$post_types = implode( ', ', array_keys( $plugin->post_types ) );
 
 	// Description for the settings page form fields.
 	$desc = array(
@@ -311,8 +324,7 @@ function km_rpbt_cache_admin() {
 	}
 
 	// Start output
-	echo '<div class="wrap rpbt_cache">';
-	echo '<h1>' . __( 'Related Posts by Taxonomy Cache', 'rpbt-cache' ) . '</h1>';
+
 	echo '<p>' . __( 'Flush the cache or cache related posts in batches.', 'rpbt-cache' ) . '</p>';
 	settings_errors();
 
