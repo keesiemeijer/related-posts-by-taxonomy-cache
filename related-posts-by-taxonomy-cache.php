@@ -92,7 +92,11 @@ function km_rpbt_cache_get_cache_settings() {
 
 	check_ajax_referer( 'rpbt_cache_nonce', 'nonce' );
 
-	// todo:  validate nonce
+	$plugin = km_rpbt_plugin();
+
+	if(!$plugin) {
+		wp_send_json_error( __( 'Plugin not activated', 'rpbt-cache' ) );
+	}
 
 	if ( !( isset( $_POST['data'] ) && $_POST['data'] ) ) {
 		wp_send_json_error( __( 'No form data', 'rpbt-cache' ) );
@@ -115,8 +119,7 @@ function km_rpbt_cache_get_cache_settings() {
 		$total = (int) $form_data['total'];
 	}
 
-	$defaults      = Related_Posts_By_Taxonomy_Defaults::get_instance();
-	$data          = $defaults->cache->sanitize_cache_args( $form_data );
+	$data          = $plugin->cache->sanitize_cache_args( $form_data );
 	$data['batch'] = $batch;
 	$data['total'] = $total;
 
@@ -164,12 +167,19 @@ add_action( 'wp_ajax_rpbt_cache_posts', 'km_rpbt_cache_posts' );
  */
 function km_rpbt_cache_posts() {
 
+	check_ajax_referer( 'rpbt_cache_nonce', 'nonce' );
+
+	$plugin = km_rpbt_plugin();
+
+	if(!$plugin) {
+		wp_send_json_error( __( 'Plugin not activated', 'rpbt-cache' ) );
+	}
+
 	if ( !( isset( $_POST['data'] ) && $_POST['data'] ) ) {
 		wp_send_json_error( __( 'No form data', 'rpbt-cache' ) );
 	}
 
 	$post_data    = $_POST['data'];
-	$defaults     = Related_Posts_By_Taxonomy_Defaults::get_instance();
 	$total        = isset( $post_data['total'] )  ? (int) $post_data['total']  : -1;
 	$total        = ( -1 === $total )             ? (int) $post_data['count']  : $total;
 	$batch        = isset( $post_data['batch'] )  ? (int) $post_data['batch']  : 5;
@@ -177,7 +187,7 @@ function km_rpbt_cache_posts() {
 	$data['done'] = false;
 	$data['form'] = $post_data;
 
-	$form_data = $defaults->cache->sanitize_cache_args( $_POST['data'] );
+	$form_data = $plugin->cache->sanitize_cache_args( $_POST['data'] );
 
 	$args = array(
 		'posts_per_page' => $batch,
@@ -211,7 +221,7 @@ function km_rpbt_cache_posts() {
 	if ( !empty( $post_ids ) ) {
 		foreach ( $post_ids as $post_id ) {
 			$form_data['post_id'] = $post_id;
-			$defaults->cache->get_related_posts( $form_data );
+			$plugin->cache->get_related_posts( $form_data );
 		}
 	} else {
 		// No posts found for offset.
@@ -351,6 +361,7 @@ function km_rpbt_cache_admin() {
 
 	// Form field output
 	foreach ( $fields as $key => $value ) {
+		$value = esc_attr($value);
 		echo "<tr valign='top'><th scope='row'>{$key}</th>";
 		echo "<td><input class='regular-text' type='text' name='{$key}' value='{$value}'>";
 		if ( isset( $desc[$key] ) ) {
