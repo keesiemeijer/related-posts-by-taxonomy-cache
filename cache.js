@@ -64,7 +64,7 @@
 			error: Error,
 			data: {
 				data: form_data,
-				nonce: rpbt_cache.nonce
+				security: rpbt_cache.nonce
 			}
 		} ).done( function( response ) {
 
@@ -118,6 +118,7 @@
 			error: Error,
 			data: {
 				data: form_data,
+				security: rpbt_cache.nonce
 			}
 		} ).done( function( response ) {
 

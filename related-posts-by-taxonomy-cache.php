@@ -25,6 +25,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+include plugin_dir_path( __FILE__ ) . 'functions.php';
+
 add_action( 'admin_menu', 'km_rpbt_cache_admin_menu' );
 
 /**
@@ -90,7 +92,7 @@ add_action( 'wp_ajax_rpbt_cache_get_cache_settings', 'km_rpbt_cache_get_cache_se
 function km_rpbt_cache_get_cache_settings() {
 	global $wpdb;
 
-	check_ajax_referer( 'rpbt_cache_nonce', 'nonce' );
+	check_ajax_referer( 'rpbt_cache_nonce', 'security' );
 
 	$plugin = km_rpbt_plugin();
 
@@ -123,18 +125,7 @@ function km_rpbt_cache_get_cache_settings() {
 	$data['batch'] = $batch;
 	$data['total'] = $total;
 
-	// Create post types sql
-	$post_types    = explode( ',', $data['post_types'] );
-	$post_types    = array_map( 'esc_sql', $post_types );
-	$post_type_sql = "'" . implode( "', '", $post_types ) . "'";
-
-	// Count all posts in post types.
-	$query = "SELECT COUNT(ID) as count
-		FROM $wpdb->posts
-		WHERE $wpdb->posts.post_type IN ({$post_type_sql})
-		AND $wpdb->posts.post_status = 'publish'";
-
-	$data['count'] = $wpdb->get_var( $query );
+	$data['count'] = km_rpbtc_get_post_types_count($data['post_types']);
 
 	// Safe the settings page options.
 	unset( $data['post_id'] );
@@ -167,7 +158,7 @@ add_action( 'wp_ajax_rpbt_cache_posts', 'km_rpbt_cache_posts' );
  */
 function km_rpbt_cache_posts() {
 
-	check_ajax_referer( 'rpbt_cache_nonce', 'nonce' );
+	check_ajax_referer( 'rpbt_cache_nonce', 'security' );
 
 	$plugin = km_rpbt_plugin();
 
