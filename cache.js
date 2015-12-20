@@ -33,7 +33,7 @@
 				alert( response );
 			}
 		}
-		//console.log( 'error', response );
+		console.log( 'error', response );
 	}
 
 	// Submit form click event
@@ -64,7 +64,7 @@
 			error: Error,
 			data: {
 				data: form_data,
-				security: rpbt_cache.nonce
+				security: rpbt_cache.nonce_ajax
 			}
 		} ).done( function( response ) {
 
@@ -118,7 +118,7 @@
 			error: Error,
 			data: {
 				data: form_data,
-				security: rpbt_cache.nonce
+				security: rpbt_cache.nonce_ajax
 			}
 		} ).done( function( response ) {
 

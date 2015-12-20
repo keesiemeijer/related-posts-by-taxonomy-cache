@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Related Posts By Taxonomy Cache
-Version: 1.0-beta1
+Version: 1.1
 Plugin URI:
 Description: Persistant Cache layer settings page for the Related Posts by Taxonomy plugin. Caches related posts in batches with Ajax.
 Author URI:
@@ -75,7 +75,8 @@ function km_rpbt_cache_admin_scripts() {
 		'hide'          => __( 'Hide Cache Settings', 'rpbt-cache' ),
 		'reset'         => __( 'Reset Default Values', 'rpbt-cache' ),
 		'defaults'      => $defaults,
-		'nonce'         => wp_create_nonce( 'rpbt_cache_nonce' ),
+		'nonce_flush'   => wp_create_nonce( 'rpbt_cache_nonce_flush' ),
+		'nonce_ajax'    => wp_create_nonce( 'rpbt_cache_nonce_ajax' ),
 	);
 
 	wp_localize_script( 'rpbt_cache', 'rpbt_cache', $translation_array );
@@ -92,11 +93,11 @@ add_action( 'wp_ajax_rpbt_cache_get_cache_settings', 'km_rpbt_cache_get_cache_se
 function km_rpbt_cache_get_cache_settings() {
 	global $wpdb;
 
-	check_ajax_referer( 'rpbt_cache_nonce', 'security' );
+	check_ajax_referer( 'rpbt_cache_nonce_ajax', 'security' );
 
 	$plugin = km_rpbt_plugin();
 
-	if(!$plugin) {
+	if ( !$plugin ) {
 		wp_send_json_error( __( 'Plugin not activated', 'rpbt-cache' ) );
 	}
 
@@ -125,7 +126,7 @@ function km_rpbt_cache_get_cache_settings() {
 	$data['batch'] = $batch;
 	$data['total'] = $total;
 
-	$data['count'] = km_rpbtc_get_post_types_count($data['post_types']);
+	$data['count'] = km_rpbtc_get_post_types_count( $data['post_types'] );
 
 	// Safe the settings page options.
 	unset( $data['post_id'] );
@@ -158,11 +159,11 @@ add_action( 'wp_ajax_rpbt_cache_posts', 'km_rpbt_cache_posts' );
  */
 function km_rpbt_cache_posts() {
 
-	check_ajax_referer( 'rpbt_cache_nonce', 'security' );
+	check_ajax_referer( 'rpbt_cache_nonce_ajax', 'security' );
 
 	$plugin = km_rpbt_plugin();
 
-	if(!$plugin) {
+	if ( !$plugin ) {
 		wp_send_json_error( __( 'Plugin not activated', 'rpbt-cache' ) );
 	}
 
@@ -299,7 +300,12 @@ function km_rpbt_cache_admin() {
 	$get_option = false;
 
 	if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
-		check_admin_referer( 'rpbt_cache_nonce' );
+
+		if ( isset( $_POST['cache_posts'] ) ) {
+			check_admin_referer( 'rpbt_cache_nonce_ajax' );
+			echo '<div class="notice"><p>' . __( 'Please enable Javascript to cache posts', 'rpbt-cache' ) . '</p></div>';
+			return;
+		}
 
 		$_POST     = stripslashes_deep( $_POST );
 		$post_args = wp_parse_args( $_POST, $fields );
@@ -331,6 +337,7 @@ function km_rpbt_cache_admin() {
 
 	// Add notice if cache was flushed.
 	if ( isset( $_POST['flush_cache'] ) ) {
+		check_admin_referer( 'rpbt_cache_nonce_flush' );
 		$cache->flush_cache();
 		echo '<div class="updated"><p>' . __( 'Flushed the Cache', 'rpbt-cache' ) . '</p></div>';
 	}
@@ -340,19 +347,19 @@ function km_rpbt_cache_admin() {
 	echo '<h3>' . __( 'Flush Cache', 'rpbt-cache' ) . '</h3>';
 	echo '<p>' . __( 'Flush the cache manually', 'rpbt-cache' ) . '</p>';
 	echo '<form method="post" action="" style="border-bottom: 1px solid #dedede">';
-	wp_nonce_field( 'rpbt_cache_nonce' );
+	wp_nonce_field( 'rpbt_cache_nonce_flush' );
 	echo '<input type="hidden" name="flush_cache" value="1" />';
 	submit_button( __( 'Flush Cache!', 'rpbt-cache' ) );
 	echo '</form>';
 
 	echo '<h3>' . __( 'Cache Parameters', 'rpbt-cache' ) . '</h3>';
 	echo '<form method="post" action="" id="cache_form">';
-	wp_nonce_field( 'rpbt_cache_nonce' );
+	wp_nonce_field( 'rpbt_cache_nonce_ajax' );
 	echo "<table class='form-table'>";
 
 	// Form field output
 	foreach ( $fields as $key => $value ) {
-		$value = esc_attr($value);
+		$value = esc_attr( $value );
 		echo "<tr valign='top'><th scope='row'>{$key}</th>";
 		echo "<td><input class='regular-text' type='text' name='{$key}' value='{$value}'>";
 		if ( isset( $desc[$key] ) ) {
