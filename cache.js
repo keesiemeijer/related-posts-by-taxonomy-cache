@@ -4,7 +4,7 @@
 		cache_total = -1,
 		cached = 0,
 		progress = 0,
-		batch = 5,
+		batch = 50,
 		progress_bar,
 		notice,
 		processing = false;
