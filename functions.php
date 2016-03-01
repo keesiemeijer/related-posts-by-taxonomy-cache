@@ -10,7 +10,7 @@ function km_rpbtc_get_post_types_count( $post_types ) {
 
 	global $wpdb;
 
-	$post_types = km_rpbt_validate_post_types( $post_types  );
+	$post_types = km_rpbt_get_post_types( $post_types  );
 
 	if ( empty( $post_types ) ) {
 		return 0;
@@ -53,17 +53,27 @@ function km_rpbtc_apply_filters( $filter, $args, $post_id = 0 ) {
 
 	if ( 'shortcode' === $filter ) {
 		$defaults = km_rpbt_get_shortcode_atts();
+
 		$defaults = apply_filters( 'related_posts_by_taxonomy_shortcode_defaults', $defaults );
+
 		$args = shortcode_atts( (array) $defaults, $args, 'related_posts_by_tax' );
-		$args = apply_filters( 'related_posts_by_taxonomy_shortcode_atts', $args );
-		$args['post_id'] = $post_id;
+
+		// Sets post types and post id inside the loop
+		$validated_args = km_rpbt_validate_shortcode_atts( (array) $args );
+
+		// We're not inside the loop
+		$validated_args['post_types'] = km_rpbt_get_post_types( $args['post_types'] );
+		$validated_args['post_id'] = $post_id;
+
+		$args = apply_filters( 'related_posts_by_taxonomy_shortcode_atts', $validated_args );
+		$args = array_merge( $validated_args, (array) $args );
 	}
 
 	if ( 'widget' === $filter ) {
+		$args['post_types'] = km_rpbt_get_post_types( $args['post_types'] ); // array
 		$args['post_id'] = $post_id;
-		$args['post_types'] = explode( ',', $args['post_types'] );
-		$args = apply_filters( 'related_posts_by_taxonomy_widget_args', $args );
-		$args['post_types'] = implode( ',', $args['post_types'] );
+		$filtered_args = apply_filters( 'related_posts_by_taxonomy_widget_args', $args );
+		$args = array_merge( $filtered_args, (array) $args );
 	}
 
 	return $args;
