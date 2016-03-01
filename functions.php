@@ -123,13 +123,13 @@ function km_rpbtc_sleep( $count , $batch ) {
 /**
  * Cache posts in batches.
  * Sleep between batches.
- * 
- * @param  array   $data     Arguments to cache related posts for.
- * @param  integer $batch    Batch number.
- * @param  array   $post_ids Array with post ids to cache related posts for.
+ *
+ * @param array   $data     Arguments to cache related posts for.
+ * @param integer $batch    Batch number.
+ * @param array   $post_ids Array with post ids to cache related posts for.
  * @return void
  */
-function km_rpbtc_cache_related_posts( $data, $batch = 50, $post_ids = array() ) {
+function km_rpbtc_cache_related_posts( $data, $batch = 50, $post_ids = array(), $notify = false, $sleep = 0 ) {
 
 	$plugin = km_rpbt_plugin();
 
