@@ -81,6 +81,27 @@ function km_rpbtc_apply_filters( $filter, $args, $post_id = 0 ) {
 
 
 /**
+ * Get the plugin version of the Related Posts by Taxonomy function
+ *
+ * @return string|bool Plugin version if found, false if not found.
+ */
+function km_rpbt_cache_get_plugin_version() {
+
+	if ( !defined( 'RELATED_POSTS_BY_TAXONOMY_PLUGIN_DIR' ) ) {
+		return false;
+	}
+
+	$plugin = get_plugin_data( RELATED_POSTS_BY_TAXONOMY_PLUGIN_DIR . 'related-posts-by-taxonomy.php' );
+
+	if ( isset( $plugin['Version'] ) && $plugin['Version'] ) {
+		return "{$plugin['Version']}";
+	}
+
+	return false;
+}
+
+
+/**
  * Sleep if batch count is reached.
  * If widget or shortcode filters are used multiple cache entries are created.
  *
