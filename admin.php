@@ -6,8 +6,8 @@ add_action( 'admin_menu', 'km_rpbt_cache_admin_menu' );
  */
 function km_rpbt_cache_admin_menu() {
 	$page_hook = add_options_page(
-		__( 'Related Posts by Taxonomy Cache', 'shortcode-regex-finder' ),
-		__( 'Related Posts by Taxonomy Cache', 'shortcode-regex-finder' ),
+		__( 'Related Posts by Taxonomy Cache', 'rpbt-cache' ),
+		__( 'Related Posts by Taxonomy Cache', 'rpbt-cache' ),
 		'manage_options',
 		'related-posts-by-taxonomy-cache.php',
 		'km_rpbt_cache_admin' );
@@ -101,14 +101,14 @@ function km_rpbt_cache_admin() {
 	// Description for the settings page form fields.
 	$desc = array(
 		'order'          => __( 'DESC, ASC, or RAND. Default: DESC', 'rpbt-cache' ),
-		'taxonomies'     => sprintf( __("'%s' or comma separated list of taxonomies", 'rpbt-cache' ), $plugin->all_tax )
-							. '<br/>' . sprintf( __("Available taxonomies: %s", 'rpbt-cache' ), $taxonomies )
-							. '<br/>' . sprintf( __("Default: %s (all existing taxonomies)", 'rpbt-cache' ), $plugin->all_tax ),
+		'taxonomies'     => sprintf( __( "'%s' or comma separated list of taxonomies", 'rpbt-cache' ), $plugin->all_tax )
+		. '<br/>' . sprintf( __( "Available taxonomies: %s", 'rpbt-cache' ), $taxonomies )
+		. '<br/>' . sprintf( __( "Default: %s (all existing taxonomies)", 'rpbt-cache' ), $plugin->all_tax ),
 		'batch'          => __( 'How many posts to cache in batches. Default: 50', 'rpbt-cache' ),
 		'total'          => __( 'Amount of posts to cache. Default: -1 (cache all posts)', 'rpbt-cache' ),
-		'post_types'     => __("Comma separated list of post types", 'rpbt-cache' )
-							. '<br/>' . sprintf( __("Available post types: %s", 'rpbt-cache' ), $post_types )
-							. '<br/>' . __("Default: post", 'rpbt-cache' ),
+		'post_types'     => __( "Comma separated list of post types", 'rpbt-cache' )
+		. '<br/>' . sprintf( __( "Available post types: %s", 'rpbt-cache' ), $post_types )
+		. '<br/>' . __( "Default: post", 'rpbt-cache' ),
 		//'fields'         => __( 'Defaut empty (post objects). Other values ids, names or slugs', 'rpbt-cache' ),
 		'limit_posts'    => __( 'Default: -1 (don\'t limit posts)', 'rpbt-cache' ),
 		'limit_year'     => __( 'Default: empty or 0 (don\'t limit by years)', 'rpbt-cache' ),
@@ -187,6 +187,14 @@ function km_rpbt_cache_admin() {
 	echo '<input type="hidden" name="flush_cache" value="1" />';
 	submit_button( __( 'Flush Cache!', 'rpbt-cache' ) );
 	echo '</form>';
+
+	$version = km_rpbt_cache_get_plugin_version();
+
+	if ( RELATED_POSTS_BY_TAXONOMY_CACHE_VERSION !== $version ) {
+		$error = __( 'Please update this plugin to the same version as the Related Posts By Taxonomy plugin to cache posts in batches.', 'rpbt-cache' );
+		echo '<div class="plugin-error"><p>' . $error . '</p></div></div></div>';
+		return;
+	}
 
 	echo '<h3>' . __( 'Cache Parameters', 'rpbt-cache' ) . '</h3>';
 	echo '<form method="post" action="" id="cache_form">';
