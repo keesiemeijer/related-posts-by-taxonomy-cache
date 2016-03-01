@@ -2,7 +2,7 @@
 
 A persistant Cache layer settings page for the Related Posts by Taxonomy plugin. Caches related posts in batches with Ajax.
 
-Version:           1.1  
+Version:           2.2.0  
 Requires at least: 3.9  
 Tested up to:      4.4  
 
