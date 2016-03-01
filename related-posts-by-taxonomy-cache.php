@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Related Posts By Taxonomy Cache
-Version: 1.1
+Version: 2.2.0
 Plugin URI:
 Description: Persistant Cache layer settings page for the Related Posts by Taxonomy plugin. Caches related posts in batches with Ajax.
 Author URI:
@@ -25,8 +25,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+if ( !defined( 'RELATED_POSTS_BY_TAXONOMY_CACHE_VERSION' ) ) {
+	define( 'RELATED_POSTS_BY_TAXONOMY_CACHE_VERSION', '2.2.0' );
+}
+
 include plugin_dir_path( __FILE__ ) . 'functions.php';
 include plugin_dir_path( __FILE__ ) . 'ajax.php';
 include plugin_dir_path( __FILE__ ) . 'admin.php';
 
-
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	include plugin_dir_path( __FILE__ ) . 'wp-cli.php';
+}
