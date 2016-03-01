@@ -38,10 +38,10 @@ function km_rpbt_cache_get_cache_settings() {
 		$total = (int) $form_data['total'];
 	}
 
-	$taxonomies    = isset( $data['taxonomies'] ) ? $data['taxonomies'] : 'all';
-
 	$defaults = km_rpbt_get_default_args();
 	$data     = array_merge( $defaults, $form_data );
+
+	$taxonomies  = isset( $data['taxonomies'] ) ? $data['taxonomies'] : $plugin->all_tax;
 
 	$data['batch'] = $batch;
 	$data['total'] = $total;
