@@ -157,8 +157,17 @@ function km_rpbtc_cache_related_posts( $data, $batch = 50, $post_ids = array() )
 
 		if ( !( $widget && $shortcode ) ) {
 			// Widget AND shortcode not filtered.
+
 			$plugin->cache->get_related_posts( $sanitized_data );
 			$i = km_rpbtc_sleep( ++$i , $batch );
+		}
+
+		// wp-cli command
+		if ( $notify ) {
+			$notify->tick();
+			if ( $sleep && ( $batch === $i ) ) {
+				sleep( $sleep );
+			}
 		}
 	}
 }
