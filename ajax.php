@@ -108,7 +108,7 @@ function km_rpbt_cache_posts() {
 
 	$args = array(
 		'posts_per_page' => $batch,
-		'post_types'     => explode( ',', $form_data['post_types'] ),
+		'post_type'     => explode( ',', $form_data['post_types'] ),
 		'fields'         => 'ids',
 	);
 
