@@ -1,10 +1,12 @@
 # Related Posts by Taxonomy Cache
 
-A persistant Cache layer settings page for the Related Posts by Taxonomy plugin. Caches related posts in batches with Ajax.
+A persistant Cache layer settings page for the [Related Posts by Taxonomy](https://wordpress.org/plugins/related-posts-by-taxonomy/) plugin. It caches related posts in batches with Ajax.
 
-Version:           2.2.1  
-Requires at least: 3.9  
-Tested up to:      4.5  
+For more information see the [cache documentation](https://keesiemeijer.wordpress.com/related-posts-by-taxonomy/cache/)
+
+Version:           2.2.2  
+Requires at least: 4.0  
+Tested up to:      4.7  
 
 ### Settings Page
 
