@@ -52,7 +52,7 @@ function km_rpbtc_remove_nonce_data( $data ) {
 function km_rpbtc_apply_filters( $filter, $args, $post_id = 0 ) {
 
 	if ( 'shortcode' === $filter ) {
-		$defaults = km_rpbt_get_shortcode_atts();
+		$defaults = km_rpbt_get_default_settings( 'shortcode' );
 
 		$defaults = apply_filters( 'related_posts_by_taxonomy_shortcode_defaults', $defaults );
 
