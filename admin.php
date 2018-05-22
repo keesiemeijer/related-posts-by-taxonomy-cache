@@ -30,7 +30,7 @@ function km_rpbt_cache_admin_scripts() {
 	// Defaults for reset by Javascript.
 	if ( function_exists( 'km_rpbt_plugin' ) ) {
 		$plugin   = km_rpbt_plugin();
-		$defaults = km_rpbt_get_default_args();
+		$defaults = km_rpbt_get_query_vars();
 		$defaults['taxonomies'] = 'all';
 
 		// Normalise values for use in form fields.
@@ -79,16 +79,14 @@ function km_rpbt_cache_admin() {
 		$plugin = km_rpbt_plugin();
 	}
 
-	if ( !( $plugin instanceof Related_Posts_By_Taxonomy_Defaults ) ) {
+	if ( ! ( $plugin instanceof Related_Posts_By_Taxonomy_Defaults ) ) {
 		$error = __( 'Related Posts by Taxonomy plugin is not installed or activated!', 'rpbt-cache' );
 		echo '<div class="error"><p>' . $error . '</p></div></div>';
 		return;
 	}
 
-	$cache_exists = $plugin->cache instanceof Related_Posts_By_Taxonomy_Cache;
-
 	// Check if cache is enabled.
-	if ( !$cache_exists || !class_exists( 'Related_Posts_By_Taxonomy_Cache' ) ) {
+	if ( ! ( km_rpbt_plugin_supports( 'cache' ) && km_rpbt_is_cache_loaded() ) ) {
 		$error = __( 'The cache for the Related Posts by Taxonomy plugin is not enabled!', 'rpbt-cache' );
 		echo '<div class="error"><p>' . $error . '</p></div></div>';
 		return;
@@ -117,9 +115,12 @@ function km_rpbt_cache_admin() {
 		'post_thumbnail' => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
 		'related'        => __( 'boolean: 1 or 0. Default: 1', 'rpbt-cache' ),
 		'exclude_terms'  => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
+		'terms'          => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
 		'include_terms'  => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
 		'exclude_posts'  => __( 'Comma separated list of post ids. Default: empty.', 'rpbt-cache' ),
 		'posts_per_page' => __( 'Default 5.', 'rpbt-cache' ),
+		'public_only'    => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
+		'include_self'   => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
 	);
 
 	$fields = array(
@@ -127,7 +128,7 @@ function km_rpbt_cache_admin() {
 		'batch'      => 50,
 		'taxonomies' => $taxonomies );
 
-	$defaults = km_rpbt_get_default_args();
+	$defaults = km_rpbt_get_query_vars();
 
 	// Not used by the widget or shortcode
 	unset( $defaults['fields'] );
@@ -156,7 +157,7 @@ function km_rpbt_cache_admin() {
 	// Get the settings from the database.
 	if ( $get_option ) {
 		$option = get_option( 'rpbt_related_posts_cache_args' );
-		if ( !empty( $option ) && is_array( $option ) ) {
+		if ( ! empty( $option ) && is_array( $option ) ) {
 			unset( $option['post_id'], $option['count'], $option['fields'] );
 			$fields = array_merge( $fields, $option );
 		}
@@ -206,8 +207,8 @@ function km_rpbt_cache_admin() {
 		$value = esc_attr( $value );
 		echo "<tr valign='top'><th scope='row'>{$key}</th>";
 		echo "<td><input class='regular-text' type='text' name='{$key}' value='{$value}'>";
-		if ( isset( $desc[$key] ) ) {
-			echo '<p class="description">' . $desc[$key] . '</p>';
+		if ( isset( $desc[ $key ] ) ) {
+			echo '<p class="description">' . $desc[ $key ] . '</p>';
 		}
 		echo "</td></tr>";
 		if ( 'batch' === $key ) {

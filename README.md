@@ -4,7 +4,7 @@ A persistant Cache layer settings page for the [Related Posts by Taxonomy](https
 
 For more information see the [cache documentation](https://keesiemeijer.wordpress.com/related-posts-by-taxonomy/cache/)
 
-Version:           2.4.1  
+Version:           2.5.0  
 Requires at least: 4.1  
 Tested up to:      4.9  
 

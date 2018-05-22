@@ -38,7 +38,7 @@ function km_rpbt_cache_get_cache_settings() {
 		$total = (int) $form_data['total'];
 	}
 
-	$defaults = km_rpbt_get_default_args();
+	$defaults = km_rpbt_get_query_vars();
 	$data     = array_merge( $defaults, $form_data );
 
 	$taxonomies  = isset( $data['taxonomies'] ) ? $data['taxonomies'] : $plugin->all_tax;
@@ -104,7 +104,7 @@ function km_rpbt_cache_posts() {
 	$data['form'] = $post_data;
 	$taxonomies   = isset( $post_data['taxonomies'] )  ? $post_data['taxonomies'] : $plugin->all_tax;
 
-	$form_data    = array_merge( km_rpbt_get_default_args(), $_POST['data'] );
+	$form_data    = array_merge( km_rpbt_get_query_vars(), $_POST['data'] );
 
 	$args = array(
 		'posts_per_page' => $batch,

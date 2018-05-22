@@ -78,7 +78,7 @@ class Related_Posts_By_Taxonomy_CLI extends WP_CLI_Command {
 		list ( $count ) = $args;
 
 		$plugin   = km_rpbt_plugin();
-		$defaults = km_rpbt_get_default_args();
+		$defaults = km_rpbt_get_query_vars();
 
 		if ( !$plugin ) {
 			WP_CLI::error( 'Error: Could not find plugin instance' );
