@@ -121,6 +121,11 @@ function km_rpbt_cache_admin() {
 		'posts_per_page' => __( 'Default 5.', 'rpbt-cache' ),
 		'public_only'    => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
 		'include_self'   => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
+		'meta_key'       => __( 'string: default empty string', 'rpbt-cache' ),
+		'meta_value'     => __( 'string: default empty string. Use a comma separeted list for array values', 'rpbt-cache' ),
+		'meta_compare'   => __( 'string: default empty string', 'rpbt-cache' ),
+		'meta_type'      => __( 'string: default empty string', 'rpbt-cache' ),
+		'fields'         => __( "'ids', 'names' or 'slugs' Default empty (returns post objects)", 'rpbt-cache' ),
 	);
 
 	$fields = array(
@@ -131,7 +136,7 @@ function km_rpbt_cache_admin() {
 	$defaults = km_rpbt_get_query_vars();
 
 	// Not used by the widget or shortcode
-	unset( $defaults['fields'] );
+	// unset( $defaults['fields'] );
 
 	$fields = array_merge( $fields, $defaults );
 	$get_option = false;

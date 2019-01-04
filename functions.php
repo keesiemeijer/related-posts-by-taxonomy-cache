@@ -3,7 +3,7 @@
 /**
  * Get post count for multiple or single post types.
  *
- * @param array   $post_types Array with post types.
+ * @param array $post_types Array with post types.
  * @return int   Post count for single or multiple post types.
  */
 function km_rpbtc_get_post_types_count( $post_types ) {
@@ -32,7 +32,7 @@ function km_rpbtc_get_post_types_count( $post_types ) {
 /**
  * Removes nonce data from $_POST variable.
  *
- * @param array   $data $_POST
+ * @param array $data $_POST
  * @return array       $_POST data with nonce removed.
  */
 function km_rpbtc_remove_nonce_data( $data ) {
@@ -87,7 +87,7 @@ function km_rpbtc_apply_filters( $filter, $args, $post_id = 0 ) {
  */
 function km_rpbt_cache_get_plugin_version() {
 
-	if ( !defined( 'RELATED_POSTS_BY_TAXONOMY_PLUGIN_DIR' ) ) {
+	if ( ! defined( 'RELATED_POSTS_BY_TAXONOMY_PLUGIN_DIR' ) ) {
 		return false;
 	}
 
@@ -105,8 +105,8 @@ function km_rpbt_cache_get_plugin_version() {
  * Sleep if batch count is reached.
  * If widget or shortcode filters are used multiple cache entries are created.
  *
- * @param int     $count Count of cached posts in a batch.
- * @param int     $batch Batch number
+ * @param int $count Count of cached posts in a batch.
+ * @param int $batch Batch number
  * @return int        Count of cached posts in a batch. Could be 0 if the batch was reached.
  */
 function km_rpbtc_sleep( $count , $batch ) {
@@ -133,7 +133,7 @@ function km_rpbtc_cache_related_posts( $data, $batch = 50, $post_ids = array(), 
 
 	$plugin = km_rpbt_plugin();
 
-	if ( !$plugin || empty( $post_ids ) ) {
+	if ( ! $plugin || empty( $post_ids ) ) {
 		return;
 	}
 
@@ -143,11 +143,18 @@ function km_rpbtc_cache_related_posts( $data, $batch = 50, $post_ids = array(), 
 	foreach ( $post_ids as $post_id ) {
 		$widget = $shortcode = false;
 		$sanitized_data['post_id'] = $post_id;
+		$id_query_support = km_rpbt_plugin_supports( 'id_query' );
 
 		$shortcode_data   = km_rpbtc_apply_filters( 'shortcode', $data, $post_id );
+
+		$id_query                 = $id_query_support || ( 'ids' === $shortcode_data['fields'] );
+		$shortcode_data['fields'] = $id_query ? 'ids' : '';
 		$shortcode_data_s = $plugin->cache->sanitize_cache_args( $shortcode_data );
 
 		$widget_data      = km_rpbtc_apply_filters( 'widget', $data, $post_id );
+
+		$id_query              = $id_query_support || ( 'ids' === $widget_data['fields'] );
+		$widget_data['fields'] = $id_query ? 'ids' : '';
 		$widget_data_s    = $plugin->cache->sanitize_cache_args( $widget_data );
 
 		if ( $shortcode_data_s != $sanitized_data ) {
@@ -166,6 +173,8 @@ function km_rpbtc_cache_related_posts( $data, $batch = 50, $post_ids = array(), 
 
 				// Don't cache widget if it has the same $args as the shortcode
 				if ( $widget_data_s != $shortcode_data_s ) {
+
+
 					$plugin->cache->get_related_posts( $widget_data );
 					$i = km_rpbtc_sleep( ++$i , $batch );
 				}
@@ -176,7 +185,7 @@ function km_rpbtc_cache_related_posts( $data, $batch = 50, $post_ids = array(), 
 			}
 		}
 
-		if ( !( $widget && $shortcode ) ) {
+		if ( ! ( $widget && $shortcode ) ) {
 			// Widget AND shortcode not filtered.
 
 			$plugin->cache->get_related_posts( $sanitized_data );
