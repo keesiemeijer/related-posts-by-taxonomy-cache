@@ -72,6 +72,8 @@ function km_rpbtc_apply_filters( $filter, $args, $post_id = 0 ) {
 	if ( 'widget' === $filter ) {
 		$args['post_types'] = km_rpbt_get_post_types( $args['post_types'] ); // array
 		$args['post_id'] = $post_id;
+		$args['fields'] = km_rpbt_get_template_fields( $args );
+
 		$filtered_args = apply_filters( 'related_posts_by_taxonomy_widget_args', $args );
 		$args = array_merge( $filtered_args, (array) $args );
 	}
