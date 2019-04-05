@@ -10,6 +10,8 @@ Tested up to:      5.1
 
 You can only cache posts if the version of this plugin is the same as the version of the Related Posts by Taxonomy plugin. If you want to use it with other versions you'll have to set the version [here](https://github.com/keesiemeijer/related-posts-by-taxonomy-cache/blob/a88b040bb497732deb8f0a9b0b6ce25545794ae5/related-posts-by-taxonomy-cache.php#L29). Be aware that using it with older versions it could result in errors as some functions might not exist.
 
+The settings page for this plugin is at `Settings` -> `Related Posts by Taxonomy`.
+
 ### WP-CLI
 Cache posts or flush the cache with WP-CLI commands.
 
