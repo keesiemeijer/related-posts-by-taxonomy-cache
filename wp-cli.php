@@ -87,7 +87,7 @@ class Related_Posts_By_Taxonomy_CLI extends WP_CLI_Command {
 		$args = wp_parse_args( $assoc_args, $defaults );
 
 		if ( !isset( $args['taxonomies'] ) ) {
-			$args['taxonomies'] =  $plugin->all_tax;
+			$args['taxonomies'] =  '';
 		}
 
 		$post_types = explode( ',', $args['post_types'] );

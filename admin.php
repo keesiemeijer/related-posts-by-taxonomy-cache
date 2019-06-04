@@ -15,7 +15,6 @@ function km_rpbt_cache_admin_menu() {
 	add_action( 'admin_print_scripts-' . $page_hook, 'km_rpbt_cache_admin_scripts' );
 }
 
-
 /**
  * Register and enqueue scripts
  */
@@ -31,14 +30,16 @@ function km_rpbt_cache_admin_scripts() {
 	if ( function_exists( 'km_rpbt_plugin' ) ) {
 		$plugin   = km_rpbt_plugin();
 		$defaults = km_rpbt_get_query_vars();
-		$defaults['taxonomies'] = 'all';
+		$defaults['taxonomies'] = '';
 
 		// Normalise values for use in form fields.
 		unset( $defaults['post_id'] );
 		$defaults['total'] = -1;
 		$defaults['batch'] = 50;
-		foreach ( array( 'related', 'post_thumbnail' ) as $field ) {
-			$defaults[ $field ] = $defaults[ $field ] ? 1 : 0;
+
+		$booleans = array_filter( (array) $defaults, 'is_bool' );
+		foreach ( $booleans as $key => $field ) {
+			$defaults[ $key ] = $defaults[ $key ] ? 1 : 0;
 		}
 	}
 
@@ -65,12 +66,10 @@ function km_rpbt_cache_template() {
 	include_once plugin_dir_path( __FILE__ ) . "/template.php";
 }
 
-
 /**
  * Admin page output.
  */
 function km_rpbt_cache_admin() {
-
 	echo '<div class="wrap rpbt_cache">';
 	echo '<h1>' . __( 'Related Posts by Taxonomy Cache', 'rpbt-cache' ) . '</h1>';
 
@@ -98,34 +97,36 @@ function km_rpbt_cache_admin() {
 
 	// Description for the settings page form fields.
 	$desc = array(
-		'order'          => __( 'DESC, ASC, or RAND. Default: DESC', 'rpbt-cache' ),
-		'taxonomies'     => sprintf( __( "'%s' or comma separated list of taxonomies", 'rpbt-cache' ), $plugin->all_tax )
+		'order'            => __( 'DESC, ASC, or RAND. Default: DESC', 'rpbt-cache' ),
+		'taxonomies'       => __( "empty or comma separated list of taxonomies", 'rpbt-cache' )
 		. '<br/>' . sprintf( __( "Available taxonomies: %s", 'rpbt-cache' ), $taxonomies )
-		. '<br/>' . sprintf( __( "Default: %s (all existing taxonomies)", 'rpbt-cache' ), $plugin->all_tax ),
-		'batch'          => __( 'How many posts to cache in batches. Default: 50', 'rpbt-cache' ),
-		'total'          => __( 'Amount of posts to cache. Default: -1 (cache all posts)', 'rpbt-cache' ),
-		'post_types'     => __( "Comma separated list of post types", 'rpbt-cache' )
+		. '<br/>' . __( "Default: empty (all public taxonomies)", 'rpbt-cache' ),
+		'batch'            => __( 'How many posts to cache in batches. Default: 50', 'rpbt-cache' ),
+		'total'            => __( 'Amount of posts to cache. Default: -1 (cache all posts)', 'rpbt-cache' ),
+		'post_types'       => __( "Comma separated list of post types", 'rpbt-cache' )
 		. '<br/>' . sprintf( __( "Available post types: %s", 'rpbt-cache' ), $post_types )
 		. '<br/>' . __( "Default: post", 'rpbt-cache' ),
 		//'fields'         => __( 'Defaut empty (post objects). Other values ids, names or slugs', 'rpbt-cache' ),
-		'limit_posts'    => __( 'Default: -1 (don\'t limit posts)', 'rpbt-cache' ),
-		'limit_year'     => __( 'Default: empty or 0 (don\'t limit by years)', 'rpbt-cache' ),
-		'limit_month'    => __( 'Default: empty or 0 (don\'t limit by months)', 'rpbt-cache' ),
-		'orderby'        => __( 'post_date or post_modified. Default: post_date', 'rpbt-cache' ),
-		'post_thumbnail' => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
-		'related'        => __( 'boolean: 1 or 0. Default: 1', 'rpbt-cache' ),
-		'exclude_terms'  => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
-		'terms'          => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
-		'include_terms'  => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
-		'exclude_posts'  => __( 'Comma separated list of post ids. Default: empty.', 'rpbt-cache' ),
-		'posts_per_page' => __( 'Default 5.', 'rpbt-cache' ),
-		'public_only'    => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
-		'include_self'   => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
-		'meta_key'       => __( 'string: default empty string', 'rpbt-cache' ),
-		'meta_value'     => __( 'string: default empty string. Use a comma separeted list for array values', 'rpbt-cache' ),
-		'meta_compare'   => __( 'string: default empty string', 'rpbt-cache' ),
-		'meta_type'      => __( 'string: default empty string', 'rpbt-cache' ),
-		'fields'         => __( "'ids', 'names' or 'slugs' Default empty (returns post objects)", 'rpbt-cache' ),
+		'limit_posts'      => __( 'Default: -1 (don\'t limit posts)', 'rpbt-cache' ),
+		'limit_year'       => __( 'Default: empty or 0 (don\'t limit by years)', 'rpbt-cache' ),
+		'limit_month'      => __( 'Default: empty or 0 (don\'t limit by months)', 'rpbt-cache' ),
+		'orderby'          => __( 'post_date or post_modified. Default: post_date', 'rpbt-cache' ),
+		'post_thumbnail'   => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
+		'related'          => __( 'boolean: 1 or 0. Default: 1', 'rpbt-cache' ),
+		'exclude_terms'    => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
+		'terms'            => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
+		'include_terms'    => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
+		'include_parents'  => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
+		'include_children' => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
+		'exclude_posts'    => __( 'Comma separated list of post ids. Default: empty.', 'rpbt-cache' ),
+		'posts_per_page'   => __( 'Default 5.', 'rpbt-cache' ),
+		'public_only'      => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
+		'include_self'     => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
+		'meta_key'         => __( 'string: default empty string', 'rpbt-cache' ),
+		'meta_value'       => __( 'string: default empty string. Use a comma separeted list for array values', 'rpbt-cache' ),
+		'meta_compare'     => __( 'string: default empty string', 'rpbt-cache' ),
+		'meta_type'        => __( 'string: default empty string', 'rpbt-cache' ),
+		'fields'           => __( "'ids', 'names' or 'slugs' Default empty (returns post objects)", 'rpbt-cache' ),
 	);
 
 	$fields = array(
@@ -168,8 +169,9 @@ function km_rpbt_cache_admin() {
 		}
 	}
 
-	foreach ( array( 'related', 'post_thumbnail' ) as $field ) {
-		$fields[ $field ] = $fields[ $field ] ? 1 : 0;
+	$booleans = array_filter( (array) $defaults, 'is_bool' );
+	foreach ( $booleans as $key => $field ) {
+		$fields[ $key ] = $fields[ $key ] ? 1 : 0;
 	}
 
 	// Start output
@@ -224,7 +226,7 @@ function km_rpbt_cache_admin() {
 	}
 
 	// Not used by the widget or shortcode
-	echo '<input type="hidden" name="fields" value="" />';
+	//echo '<input type="hidden" name="fields" value="" />';
 	echo "</table>\n";
 
 	echo '<p class="submit">';

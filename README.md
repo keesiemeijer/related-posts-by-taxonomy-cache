@@ -4,9 +4,9 @@ A persistent Cache layer settings page for the [Related Posts by Taxonomy](https
 
 For more information see the [cache documentation](https://keesiemeijer.wordpress.com/related-posts-by-taxonomy/cache/)
 
-Version:           2.6.0  
-Requires at least: 4.1  
-Tested up to:      5.1  
+Version:           2.7.1  
+Requires at least: 4.2  
+Tested up to:      5.2  
 
 You can only cache posts if the version of this plugin is the same as the version of the Related Posts by Taxonomy plugin. If you want to use it with other versions you'll have to set the version [here](https://github.com/keesiemeijer/related-posts-by-taxonomy-cache/blob/a88b040bb497732deb8f0a9b0b6ce25545794ae5/related-posts-by-taxonomy-cache.php#L29). Be aware that using it with older versions it could result in errors as some functions might not exist.
 

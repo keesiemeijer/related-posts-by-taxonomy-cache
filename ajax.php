@@ -13,18 +13,18 @@ function km_rpbt_cache_get_cache_settings() {
 
 	$plugin = km_rpbt_plugin();
 
-	if ( !$plugin ) {
+	if ( ! $plugin ) {
 		wp_send_json_error( __( 'Plugin not activated', 'rpbt-cache' ) );
 	}
 
-	if ( !( isset( $_POST['data'] ) && $_POST['data'] ) ) {
+	if ( ! ( isset( $_POST['data'] ) && $_POST['data'] ) ) {
 		wp_send_json_error( __( 'No form data', 'rpbt-cache' ) );
 	}
 
 	// Parse the settings page form fields.
 	wp_parse_str( $_POST['data'], $form_data );
 
-	if ( !( isset( $form_data['post_types'] ) &&  $form_data['post_types'] ) ) {
+	if ( ! ( isset( $form_data['post_types'] ) &&  $form_data['post_types'] ) ) {
 		wp_send_json_error( __( 'No post types found', 'rpbt-cache' ) );
 	}
 
@@ -62,7 +62,7 @@ function km_rpbt_cache_get_cache_settings() {
 		$options_data[ $field ] = $options_data[ $field ] ? 1 : 0;
 	}
 
-	$parameters = '<h3>' . __( 'Cache Settings', 'rpbt-cache' ). '</h3><ul>';
+	$parameters = '<h3>' . __( 'Cache Settings', 'rpbt-cache' ) . '</h3><ul>';
 	foreach (  $options_data as $key => $value ) {
 		$parameters .= '<li>' . $key . ': ' . $value . '</li>';
 	}
@@ -75,23 +75,21 @@ function km_rpbt_cache_get_cache_settings() {
 
 add_action( 'wp_ajax_rpbt_cache_posts', 'km_rpbt_cache_posts' );
 
-
 /**
  * Cache related posts in batches.
  *
  * Used by ajax action: rpbt_cache_posts.
  */
 function km_rpbt_cache_posts() {
-
 	check_ajax_referer( 'rpbt_cache_nonce_ajax', 'security' );
 
 	$plugin = km_rpbt_plugin();
 
-	if ( !$plugin ) {
+	if ( ! $plugin ) {
 		wp_send_json_error( __( 'Plugin not activated', 'rpbt-cache' ) );
 	}
 
-	if ( !( isset( $_POST['data'] ) && $_POST['data'] ) ) {
+	if ( ! ( isset( $_POST['data'] ) && $_POST['data'] ) ) {
 		wp_send_json_error( __( 'No form data', 'rpbt-cache' ) );
 	}
 
@@ -135,7 +133,7 @@ function km_rpbt_cache_posts() {
 		$data['done'] = true;
 	}
 
-	if ( !empty( $post_ids ) ) {
+	if ( ! empty( $post_ids ) ) {
 		// Cache related posts.
 		km_rpbtc_cache_related_posts( $form_data, $batch, $post_ids );
 	} else {
