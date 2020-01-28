@@ -56,10 +56,14 @@ function km_rpbt_cache_get_cache_settings() {
 	unset( $options_data['post_id'] );
 	update_option( 'rpbt_related_posts_cache_args', $options_data );
 
+	$booleans = array_filter( (array) $defaults, 'is_bool' );
+
 	// Create parameter list for display with Javascript.
 	unset( $options_data['count'] );
-	foreach ( array( 'related', 'post_thumbnail' ) as $field ) {
-		$options_data[ $field ] = $options_data[ $field ] ? 1 : 0;
+	foreach ( $booleans as $field ) {
+		if(isset($options_data[ $field ])) {
+			$options_data[ $field ] = $options_data[ $field ] ? 1 : 0;
+		}
 	}
 
 	$parameters = '<h3>' . __( 'Cache Settings', 'rpbt-cache' ) . '</h3><ul>';

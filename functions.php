@@ -138,6 +138,11 @@ function km_rpbtc_cache_related_posts( $data, $batch = 50, $post_ids = array(), 
 		return;
 	}
 
+	// Deprecated argument changed from boolean to null
+	if ( '' === $data['related'] ) {
+		$data['related'] = null;
+	}
+
 	$sanitized_data = $plugin->cache->sanitize_cache_args( $data );
 	$i              = 0;
 

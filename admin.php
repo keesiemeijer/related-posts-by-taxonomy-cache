@@ -30,6 +30,7 @@ function km_rpbt_cache_admin_scripts() {
 	if ( function_exists( 'km_rpbt_plugin' ) ) {
 		$plugin   = km_rpbt_plugin();
 		$defaults = km_rpbt_get_query_vars();
+
 		$defaults['taxonomies'] = '';
 
 		// Normalise values for use in form fields.
@@ -106,15 +107,11 @@ function km_rpbt_cache_admin() {
 		'post_types'       => __( "Comma separated list of post types", 'rpbt-cache' )
 		. '<br/>' . sprintf( __( "Available post types: %s", 'rpbt-cache' ), $post_types )
 		. '<br/>' . __( "Default: post", 'rpbt-cache' ),
-		//'fields'         => __( 'Defaut empty (post objects). Other values ids, names or slugs', 'rpbt-cache' ),
 		'limit_posts'      => __( 'Default: -1 (don\'t limit posts)', 'rpbt-cache' ),
-		'limit_year'       => __( 'Default: empty or 0 (don\'t limit by years)', 'rpbt-cache' ),
 		'limit_month'      => __( 'Default: empty or 0 (don\'t limit by months)', 'rpbt-cache' ),
 		'orderby'          => __( 'post_date or post_modified. Default: post_date', 'rpbt-cache' ),
 		'post_thumbnail'   => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
-		'related'          => __( 'boolean: 1 or 0. Default: 1', 'rpbt-cache' ),
 		'exclude_terms'    => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
-		'terms'            => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
 		'include_terms'    => __( 'Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
 		'include_parents'  => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
 		'include_children' => __( 'boolean: 1 or 0. Default: 0', 'rpbt-cache' ),
@@ -127,6 +124,9 @@ function km_rpbt_cache_admin() {
 		'meta_compare'     => __( 'string: default empty string', 'rpbt-cache' ),
 		'meta_type'        => __( 'string: default empty string', 'rpbt-cache' ),
 		'fields'           => __( "'ids', 'names' or 'slugs' Default empty (returns post objects)", 'rpbt-cache' ),
+		'limit_year'       => __( 'Deprecated argument. Default: empty or 0 (don\'t limit by years)', 'rpbt-cache' ),
+		'related'          => __( 'Deprecated argument. empty or boolean: 1 or 0. Default: empty', 'rpbt-cache' ),
+		'terms'            => __( 'Deprecated argument. Comma separated list of term ids. Default: empty.', 'rpbt-cache' ),
 	);
 
 	$fields = array(
@@ -138,6 +138,7 @@ function km_rpbt_cache_admin() {
 
 	// Not used by the widget or shortcode
 	// unset( $defaults['fields'] );
+	// unset($defaults['related'], $defaults['terms']);
 
 	$fields = array_merge( $fields, $defaults );
 	$get_option = false;
